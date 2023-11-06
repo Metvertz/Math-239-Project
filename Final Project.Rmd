@@ -1,0 +1,77 @@
+---
+title: "Project"
+author: "Mitchell Everetts"
+date: "2/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Pre Loading
+
+```{r}
+library(tidyverse)
+library(dplyr)
+df <- read_csv("sportproducts.csv")
+#creating the data frame
+```
+
+```{r}
+df_nonutritional <- df[1:11]
+#removing the nutritional valuestuff, way too little infromation to keep the collumns for genera; use (can be brought back when talking about specific categories, ex. whey/casein concentration in protein powder, caffine/creatine concentrtion in pre's, etc.)
+df_nonutritional <- df_nonutritional%>%
+  mutate(Rating = as.numeric(Rating))
+#rating was not previously a number type
+str(df_nonutritional)
+```
+
+```{r}
+df_nonutritional <- drop_na(df_nonutritional)
+df_nonutritional <- df_nonutritional%>%
+  mutate(Price = parse_number(Price))%>%
+  mutate(PricePerServing = parse_number(PricePerServing))
+
+#price and priceperserving both were not number types
+```
+
+```{r}
+str(df_nonutritional)
+```
+
+```{r}
+df_nonutritional <- df_nonutritional%>%
+  mutate(Category = as.factor(Category))%>%
+  mutate(Brand = as.factor(Brand))
+#Category and Brand both are categorical variables but neither were factor types, sidenote category and name are identical but name will be saved for titling purposes (can be combined with brand to make "MaxMuscle + protein bar" [for example])
+```
+
+```{r}
+#str(df_nonutritional)
+#attempted to convert size to numeric but it's not uniformally lb
+df_nonutritional$Category
+```
+
+
+```{r}
+ggplot(df_nonutritional, aes(Price, PricePerServing))+
+  geom_jitter()+
+  facet_wrap(~Category)
+#potential linear relationship in mass gainers and whey protein. inverse relationship potentially present in plant protein, amino acid.
+```
+
+```{r}
+ggplot(df_nonutritional, aes(Category, Rating))+
+  geom_jitter()
+```
+```{r}
+ggplot(df_nonutritional, aes(Reviews, FlavorRating))+
+  geom_point()
+```
+```{r}
+ggplot(df_nonutritional, aes(Category, Price))+
+  geom_point()
+```
+
+
